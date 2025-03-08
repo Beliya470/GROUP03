@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Servlet App - Dashboard</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Layout */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        header {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 1rem;
+        }
+        
+        header h1 {
+            margin-bottom: 0.5rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+        }
+        
+        nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.5rem 0;
+        }
+        
+        nav a:hover {
+            color: white;
+        }
+        
+        nav li.active a {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+        
+        main {
+            flex: 1;
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Dashboard styles */
+        .dashboard-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        
+        .dashboard-container h2 {
+            color: #4a6fa5;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            border: 1px solid #e1e4e8;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .connections-icon {
+            background-color: rgba(74, 111, 165, 0.1);
+            color: #4a6fa5;
+        }
+        
+        .users-icon {
+            background-color: rgba(71, 184, 224, 0.1);
+            color: #47b8e0;
+        }
+        
+        .messages-icon {
+            background-color: rgba(255, 126, 95, 0.1);
+            color: #ff7e5f;
+        }
+        
+        .stat-info {
+            flex: 1;
+        }
+        
+        .stat-info h3 {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .dashboard-info {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        
+        .dashboard-info h3 {
+            color: #4a6fa5;
+            margin-bottom: 1rem;
+        }
+        
+        .dashboard-info p {
+            margin-bottom: 1rem;
+        }
+        
+        .dashboard-info ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .dashboard-info li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Logout button */
+        .logout-btn {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            text-align: center;
+            display: block;
+            width: 100%;
+        }
+        
+        .logout-btn:hover {
+            background-color: #f5c6cb;
+        }
+        
+        /* Animation */
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stat-value {
+            animation: countUp 0.5s ease-out;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Multi-Servlet Application</h1>
+            <nav>
+                <ul>
+                    <li><a href="/" id="login-link">Login</a></li>
+                    <li><a href="/chat">Chat</a></li>
+                    <li class="active"><a href="/dashboard">Dashboard</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="dashboard-container">
+                <h2>System Dashboard</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon connections-icon">📊</div>
+                        <div class="stat-info">
+                            <h3>Total Connections</h3>
+                            <div class="stat-value" id="total-connections">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon users-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>Active Users</h3>
+                            <div class="stat-value" id="active-users">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon messages-icon">💬</div>
+                        <div class="stat-info">
+                            <h3>Messages Sent</h3>
+                            <div class="stat-value" id="messages-sent">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-info">
+                    <h3>About the Dashboard</h3>
+                    <p>This dashboard displays real-time statistics about the multi-servlet application:</p>
+                    <ul>
+                        <li><strong>Total Connections:</strong> The number of connections made to the server since startup</li>
+                        <li><strong>Active Users:</strong> The number of users currently connected to the chat</li>
+                        <li><strong>Messages Sent:</strong> The total number of messages exchanged in the chat</li>
+                    </ul>
+                    <p>All statistics are updated in real-time using WebSocket connections.</p>
+                    
+                    <button id="logout-button" class="logout-btn">Logout</button>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if user is logged in
+            const username = localStorage.getItem('username');
+            
+            // Only redirect if trying to access dashboard functionality
+            const isDashboardPath = window.location.pathname === '/dashboard';
+            if (isDashboardPath && !username) {
+                window.location.href = '/';
+                return;
+            }
+            
+            // DOM elements
+            const totalConnectionsElement = document.getElementById('total-connections');
+            const activeUsersElement = document.getElementById('active-users');
+            const messagesSentElement = document.getElementById('messages-sent');
+            const logoutButton = document.getElementById('logout-button');
+            const loginLink = document.getElementById('login-link');
+
+            // Logout function
+            function logout() {
+                localStorage.removeItem('username');
+                localStorage.removeItem('userId');
+                window.location.href = '/';
+            }
+
+            // Add logout event listener
+            logoutButton.addEventListener('click', logout);
+
+            // Make login link work as logout
+            loginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+            
+            // Connect to WebSocket
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}`;
+            const socket = new WebSocket(wsUrl);
+            
+            socket.addEventListener('message', (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'stats') {
+                        updateStats(data.data);
+                    } else if (data.type === 'userCount') {
+                        activeUsersElement.textContent = data.count;
+                    }
+                } catch (error) {
+                    console.error('Error processing message:', error);
+                }
+            });
+            
+            // Fetch stats from API
+            async function fetchStats() {
+                try {
+                    const response = await fetch('/api/stats');
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        updateStats(data.stats);
+                    }
+                } catch (error) {
+                    console.error('Error fetching stats:', error);
+                }
+            }
+            
+            // Update stats on the page
+            function updateStats(stats) {
+                totalConnectionsElement.textContent = stats.totalConnections;
+                activeUsersElement.textContent = stats.activeUsers;
+                messagesSentElement.textContent = stats.messagesSent;
+                
+                // Add animation effect
+                animateValue(totalConnectionsElement);
+                animateValue(activeUsersElement);
+                animateValue(messagesSentElement);
+            }
+            
+            // Add animation to stat values
+            function animateValue(element) {
+                element.classList.remove('animate-value');
+                void element.offsetWidth; // Trigger reflow
+                element.classList.add('animate-value');
+            }
+            
+            // Initial fetch
+            fetchStats();
+            
+            // Refresh stats every 10 seconds
+            setInterval(fetchStats, 10000);
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,681 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Servlet App - Login</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Layout */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        header {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 1rem;
+        }
+        
+        header h1 {
+            margin-bottom: 0.5rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+        }
+        
+        nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.5rem 0;
+        }
+        
+        nav a:hover {
+            color: white;
+        }
+        
+        nav li.active a {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+        
+        main {
+            flex: 1;
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        footer {
+            background-color: #3a5a80;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+        }
+        
+        /* Login styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+        }
+        
+        .login-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-card h2 {
+            color: #4a6fa5;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .login-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #4a6fa5;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            min-height: 1.2rem;
+        }
+        
+        .success-message {
+            color: #28a745;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            min-height: 1.2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.2rem;
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background-color: #3a5a80;
+        }
+        
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .login-info {
+            background-color: rgba(74, 111, 165, 0.1);
+            border-left: 4px solid #4a6fa5;
+            padding: 1rem;
+            border-radius: 0 4px 4px 0;
+            margin-top: 1.5rem;
+        }
+        
+        .login-info p {
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-info ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .login-info li {
+            margin-bottom: 0.3rem;
+        }
+        
+        /* Add styles for the toggle switch */
+        .toggle-container {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .toggle-label {
+            font-size: 0.875rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Multi-Servlet Application</h1>
+            <nav>
+                <ul>
+                    <li class="active"><a href="/">Login</a></li>
+                    <li><a href="/chat">Chat</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="login-container">
+                <div class="login-card">
+                    <h2>Welcome</h2>
+                    <p>Enter your username to get started</p>
+                    
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        
+                        <div class="toggle-container">
+                            <input type="checkbox" id="isNewUser" name="isNewUser">
+                            <label for="isNewUser" class="toggle-label">
+                                <strong>Check this only if you're a new user</strong>
+                            </label>
+                        </div>
+                        
+                        <div id="message" class="error-message"></div>
+                        
+                        <button type="submit" id="login-button" class="btn">
+                            <span id="button-text">Login</span>
+                        </button>
+                    </form>
+                    
+                    <div class="login-info">
+                        <p>This is a multi-servlet application with real-time communication.</p>
+                        <p>After logging in, you can:</p>
+                        <ul>
+                            <li>Chat with other users in real-time</li>
+                            <li>View system statistics on the dashboard</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 Multi-Servlet Application</p>
+        </footer>
+    </div>
+    
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is already logged in
+    const username = localStorage.getItem('username');
+    if (username) {
+        // Redirect to chat page if already logged in
+        window.location.href = '/chat';
+        return;
+    }
+    
+    const loginForm = document.getElementById('login-form');
+    const loginButton = document.getElementById('login-button');
+    const messageElement = document.getElementById('message');
+    const isNewUserCheckbox = document.getElementById('isNewUser');
+    const buttonText = document.getElementById('button-text');
+    
+    // Update button text based on checkbox
+    isNewUserCheckbox.addEventListener('change', (e) => {
+        buttonText.textContent = e.target.checked ? 'Register' : 'Login';
+    });
+    
+    // Handle form submission
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Disable button while processing
+        loginButton.disabled = true;
+        buttonText.textContent = 'Processing...';
+        
+        const usernameInput = document.getElementById('username');
+        const username = usernameInput.value.trim();
+        const isNewUser = isNewUserCheckbox.checked;
+        
+        console.log("Form submission:", { username, isNewUser });
+        
+        if (!username) {
+            showError('Username cannot be empty');
+            resetButton();
+            return;
+        }
+        
+        try {
+            // Use different endpoints based on whether it's a login or registration
+            const endpoint = isNewUser ? '/api/register' : '/api/login';
+            
+            // Send login/register request
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username })
+            });
+            
+            const data = await response.json();
+            console.log("Server response:", data);
+            
+            if (!response.ok) {
+                showError(data.error || 'Failed to login');
+                resetButton();
+                return;
+            }
+            
+            // Save user data to localStorage
+            localStorage.setItem('username', data.user.username);
+            localStorage.setItem('userId', data.user.id);
+            
+            // Show success message
+            showSuccess(isNewUser ? 'Registration successful!' : 'Login successful!');
+            
+            // Redirect to chat page after a short delay
+            setTimeout(() => {
+                window.location.href = '/chat';
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Login error:', error);
+            showError('An error occurred. Please try again.');
+            resetButton();
+        }
+    });
+    
+    function showError(message) {
+        messageElement.className = 'error-message';
+        messageElement.textContent = message;
+    }
+    
+    function showSuccess(message) {
+        messageElement.className = 'success-message';
+        messageElement.textContent = message;
+    }
+    
+    function resetButton() {
+        loginButton.disabled = false;
+        buttonText.textContent = isNewUserCheckbox.checked ? 'Register' : 'Login';
+    }
+});
+</script>
+</body>
+</html>
+ -->
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Multi-Servlet App - Login</title>
+     <style>
+         /* Reset and base styles */
+         * {
+             margin: 0;
+             padding: 0;
+             box-sizing: border-box;
+         }
+         
+         body {
+             font-family: Arial, sans-serif;
+             background-color: #f5f7fa;
+             color: #333;
+             line-height: 1.6;
+         }
+         
+         /* Layout */
+         .app-container {
+             display: flex;
+             flex-direction: column;
+             min-height: 100vh;
+         }
+         
+         header {
+             background-color: #4a6fa5;
+             color: white;
+             padding: 1rem;
+         }
+         
+         header h1 {
+             margin-bottom: 0.5rem;
+         }
+         
+         nav ul {
+             display: flex;
+             list-style: none;
+             gap: 1rem;
+         }
+         
+         nav a {
+             color: rgba(255, 255, 255, 0.8);
+             text-decoration: none;
+             padding: 0.5rem 0;
+         }
+         
+         nav a:hover {
+             color: white;
+         }
+         
+         nav li.active a {
+             color: white;
+             border-bottom: 2px solid white;
+         }
+         
+         main {
+             flex: 1;
+             padding: 1rem;
+             max-width: 1200px;
+             margin: 0 auto;
+             width: 100%;
+         }
+         
+         footer {
+             background-color: #3a5a80;
+             color: white;
+             text-align: center;
+             padding: 1rem;
+             margin-top: auto;
+         }
+         
+         /* Login styles */
+         .login-container {
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             min-height: 70vh;
+         }
+         
+         .login-card {
+             background-color: white;
+             border-radius: 8px;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+             padding: 2rem;
+             width: 100%;
+             max-width: 400px;
+         }
+         
+         .login-card h2 {
+             color: #4a6fa5;
+             margin-bottom: 0.5rem;
+             font-size: 1.5rem;
+         }
+         
+         .login-card p {
+             color: #666;
+             margin-bottom: 1.5rem;
+         }
+         
+         .form-group {
+             margin-bottom: 1.5rem;
+         }
+         
+         label {
+             display: block;
+             margin-bottom: 0.5rem;
+             font-weight: 500;
+         }
+         
+         input[type="text"] {
+             width: 100%;
+             padding: 0.8rem;
+             border: 1px solid #ddd;
+             border-radius: 4px;
+             font-size: 1rem;
+         }
+         
+         input[type="text"]:focus {
+             border-color: #4a6fa5;
+             outline: none;
+             box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
+         }
+         
+         .error-message {
+             color: #dc3545;
+             font-size: 0.9rem;
+             margin-top: 0.5rem;
+             min-height: 1.2rem;
+         }
+         
+         .success-message {
+             color: #28a745;
+             font-size: 0.9rem;
+             margin-top: 0.5rem;
+             min-height: 1.2rem;
+         }
+         
+         .btn {
+             display: inline-block;
+             padding: 0.8rem 1.2rem;
+             background-color: #4a6fa5;
+             color: white;
+             border: none;
+             border-radius: 4px;
+             cursor: pointer;
+             font-size: 1rem;
+             font-weight: 500;
+             width: 100%;
+         }
+         
+         .btn:hover {
+             background-color: #3a5a80;
+         }
+         
+         .btn:disabled {
+             background-color: #6c757d;
+             cursor: not-allowed;
+         }
+         
+         .login-info {
+             background-color: rgba(74, 111, 165, 0.1);
+             border-left: 4px solid #4a6fa5;
+             padding: 1rem;
+             border-radius: 0 4px 4px 0;
+             margin-top: 1.5rem;
+         }
+         
+         .login-info p {
+             margin-bottom: 0.5rem;
+         }
+         
+         .login-info ul {
+             margin-left: 1.5rem;
+             margin-top: 0.5rem;
+         }
+         
+         .login-info li {
+             margin-bottom: 0.3rem;
+         }
+     </style>
+ </head>
+ <body>
+     <div class="app-container">
+         <header>
+             <h1>Multi-Servlet Application</h1>
+             <nav>
+                 <ul>
+                     <li class="active"><a href="/">Login</a></li>
+                     <li><a href="/chat">Chat</a></li>
+                     <li><a href="/dashboard">Dashboard</a></li>
+                 </ul>
+             </nav>
+         </header>
+         
+         <main>
+             <section class="login-container">
+                 <div class="login-card">
+                     <h2>Welcome to the Chat</h2>
+                     <p>Enter your name to get started</p>
+                     
+                     <form id="login-form">
+                         <div class="form-group">
+                             <label for="username">Your Name</label>
+                             <input type="text" id="username" name="username" placeholder="Enter any name you like" required>
+                         </div>
+                         
+                         <div id="message" class="error-message"></div>
+                         
+                         <button type="submit" id="login-button" class="btn">
+                             Start Chatting
+                         </button>
+                     </form>
+                     
+                     <div class="login-info">
+                         <p>This is an open chat application with real-time communication.</p>
+                         <p>After entering your name, you can:</p>
+                         <ul>
+                             <li>Chat with other users in real-time</li>
+                             <li>View system statistics on the dashboard</li>
+                             <li>See previous messages from other users</li>
+                         </ul>
+                     </div>
+                 </div>
+             </section>
+         </main>
+         
+         <footer>
+             <p>&copy; 2025 Multi-Servlet Application</p>
+         </footer>
+     </div>
+     
+     <script>
+ document.addEventListener('DOMContentLoaded', () => {
+     // Check if user is already logged in
+     const username = localStorage.getItem('username');
+     if (username) {
+         // Redirect to chat page if already logged in
+         window.location.href = '/chat';
+         return;
+     }
+     
+     const loginForm = document.getElementById('login-form');
+     const loginButton = document.getElementById('login-button');
+     const messageElement = document.getElementById('message');
+     
+     // Handle form submission
+     loginForm.addEventListener('submit', async (e) => {
+         e.preventDefault();
+         
+         // Disable button while processing
+         loginButton.disabled = true;
+         loginButton.textContent = 'Joining...';
+         
+         const usernameInput = document.getElementById('username');
+         const username = usernameInput.value.trim();
+         
+         console.log("Form submission:", { username });
+         
+         if (!username) {
+             showError('Please enter your name');
+             resetButton();
+             return;
+         }
+         
+         try {
+             // Use the simplified /api/auth endpoint
+             const response = await fetch('/api/auth', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify({ username })
+             });
+             
+             const data = await response.json();
+             console.log("Server response:", data);
+             
+             if (!response.ok) {
+                 showError(data.error || 'Failed to join');
+                 resetButton();
+                 return;
+             }
+             
+             // Save user data to localStorage
+             localStorage.setItem('username', data.user.username);
+             localStorage.setItem('userId', data.user.id);
+             
+             // Show success message
+             showSuccess('Joining chat...');
+             
+             // Redirect to chat page after a short delay
+             setTimeout(() => {
+                 window.location.href = '/chat';
+             }, 500);
+             
+         } catch (error) {
+             console.error('Login error:', error);
+             showError('An error occurred. Please try again.');
+             resetButton();
+         }
+     });
+     
+     function showError(message) {
+         messageElement.className = 'error-message';
+         messageElement.textContent = message;
+     }
+     
+     function showSuccess(message) {
+         messageElement.className = 'success-message';
+         messageElement.textContent = message;
+     }
+     
+     function resetButton() {
+         loginButton.disabled = false;
+         loginButton.textContent = 'Start Chatting';
+     }
+ });
+ </script>
+ </body>
+ </html>
+ 
+ 

@@ -1,0 +1,137 @@
+/* Dashboard Page Styles */
+.dashboard-container {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 2rem;
+  }
+  
+  .dashboard-container h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.8rem;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .stat-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--border-color);
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+  }
+  
+  .stat-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .connections-icon {
+    background-color: rgba(74, 111, 165, 0.1);
+    color: var(--primary-color);
+  }
+  
+  .users-icon {
+    background-color: rgba(71, 184, 224, 0.1);
+    color: var(--secondary-color);
+  }
+  
+  .messages-icon {
+    background-color: rgba(255, 126, 95, 0.1);
+    color: var(--accent-color);
+  }
+  
+  .stat-info {
+    flex: 1;
+  }
+  
+  .stat-info h3 {
+    font-size: 1rem;
+    color: var(--text-light);
+    margin-bottom: 0.3rem;
+  }
+  
+  .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color);
+  }
+  
+  .dashboard-info {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  .dashboard-info h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard-info p {
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard-info ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard-info li {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Animation */
+  @keyframes countUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .stat-value {
+    animation: countUp 0.5s ease-out;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .dashboard-container {
+      padding: 1.5rem;
+    }
+  }
+  
+  
